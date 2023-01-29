@@ -48,7 +48,7 @@ fun SettingScreen(
                 title = { Text("Settings") },
                 navigationIcon = {
                     IconButton(onClick = {
-                        navController.popBackStack(Screen.SelectDepartmentScreen.route, false)
+                        navController.popBackStack(Screen.InsertCivilIdScreen.route, false)
                     }) {
                         Icon(
                             Icons.Filled.KeyboardArrowLeft,

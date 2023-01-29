@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
    //     applicationId "com.gicproject.salamkioskapp"  //alsalam
-        applicationId "com.gicproject.daskioskapp"  //das
+        applicationId "com.gicproject.SalamCivilIdPrintKioskApp"  //das
         minSdk 24
         targetSdk 30
         versionCode 1

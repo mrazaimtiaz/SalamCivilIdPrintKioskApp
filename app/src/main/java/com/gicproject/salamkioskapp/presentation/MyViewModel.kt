@@ -19,8 +19,11 @@ import com.szsicod.print.escpos.PrinterAPI
 import com.szsicod.print.io.InterfaceAPI
 import com.szsicod.print.io.USBAPI
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.internal.and
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -165,6 +168,65 @@ class MyViewModel @Inject constructor(
      fun initPrinter( printer: PrinterAPI?, context: Context){
         mPrinter = printer
         mContext = context
+    }
+
+   fun  functionPrintBarcode(name: String, bloodGroup: String,civilId: String){
+       CoroutineScope(Dispatchers.IO).launch {
+           if (mPrinter?.isConnect == true) {
+               mPrinter?.disconnect()
+           }
+
+
+
+           var io: InterfaceAPI? = null                   // USB
+           io = USBAPI(mContext)
+
+           //  io = UsbNativeAPI()
+
+
+
+           if (io != null) {
+               val ret = mPrinter?.connect(io)
+           }
+
+           try {
+            // mPrinter!!.setPrintColorSize(4)
+
+
+            /*   var mName = name
+               if(mName.length > 24){
+                   mName = mName.substring(0,24)
+               }
+               mPrinter!!.printString("$name   $bloodGroup\n")
+               mPrinter!!.printCostomString(mContext,"760884    ", 6F)
+               mPrinter!!.printCostomString(mContext,"28/01/2023 15:06\n", 4F)
+               mPrinter!!.printCostomString(mContext,"BIO CHEMISTRY         EDTA\n", 4F)
+               mPrinter!!.printCostomString(mContext,"$mName\n", 20F)*/
+
+               mPrinter!!.printString("$name   $bloodGroup\n")
+             //  mPrinter!!.printFeed()
+               // 条码内容在下方
+               // 条码内容在下方
+               mPrinter!!.sendOrder(byteArrayOf(0x1d, 0x48, 0x02))
+               mPrinter!!.setBarCodeWidth(3)
+               mPrinter!!.setBarCodeHeight(70)
+
+               val barStr = civilId //"1234567890"
+               mPrinter!!.printBarCode(73, barStr.length, barStr)
+//                    mPrinter.sendOrder(gainBarCode128(barStr, "C"));
+
+               //                    mPrinter.sendOrder(gainBarCode128(barStr, "C"));
+               mPrinter!!.printFeed()
+              // mPrinter!!.printString("test is finished！\n")
+              // mPrinter!!.printFeed()
+
+               val ret = mPrinter!!.cutPaper(66, 0)
+
+           } catch (e: java.lang.Exception) {
+               e.printStackTrace()
+           }
+       }
+
     }
      fun funcPrinterConnect() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -397,6 +459,8 @@ class MyViewModel @Inject constructor(
                                 var text = "";
                                 try {
                                     civilidText = paci!!.GetData("", "CIVIL-NO")
+
+
                                 } catch (e: java.lang.Exception) {
                                     e.printStackTrace()
                                 }
@@ -435,13 +499,18 @@ class MyViewModel @Inject constructor(
                                 } catch (e: java.lang.Exception) {
                                     e.printStackTrace()
                                 }
+                                try {
+                                    bloodGroupText = paci.GetData("", "BLOOD-TYPE")
+                                } catch (e: java.lang.Exception) {
+                                    e.printStackTrace()
+                                }
                                 /* try {
                                      genderText = paci.GetData("1", "SEX-LATIN-TEXT")
                                  } catch (e: java.lang.Exception) {
                                      e.printStackTrace()
                                  }*/
                                 try {
-                                    tel1Text = paci.GetData("1", "TEL-1")
+                                 //   tel1Text = paci.GetData("1", "TEL-1")
                                 } catch (e: java.lang.Exception) {
                                     e.printStackTrace()
                                 }
@@ -459,7 +528,7 @@ class MyViewModel @Inject constructor(
                                     e.printStackTrace()
                                 }*/
                                 try {
-                                    emailText = paci.GetData("1", "MOI-REFERENCE")
+                                 //   emailText = paci.GetData("1", "MOI-REFERENCE")
                                     ////MOI-REFERENCE  //E-MAIL-ADDRESS
                                 } catch (e: java.lang.Exception) {
                                     e.printStackTrace()
@@ -470,14 +539,15 @@ class MyViewModel @Inject constructor(
                                      e.printStackTrace()
                                  }*/
                                 try {
-                                    expiryText = paci.GetData("1", "CARD-EXPIRY-DATE")
+                                  //  expiryText = paci.GetData("1", "CARD-EXPIRY-DATE")
                                 } catch (e: java.lang.Exception) {
                                     e.printStackTrace()
                                 }
                                 fullNameArText =
                                     "$firstNameArText $secondNameArText $thirdNameArText $fourNameArText"
-                                fullNameText = "$firstNameText $secondNameText $thirdNameText $fourNameText"
+                                fullNameText = "$firstNameText $secondNameText" //$thirdNameText $fourNameText
 
+                                functionPrintBarcode(fullNameText,bloodGroupText, civilId = civilidText)
                                 try {
                                     expiryText = expiryText.substring(0, 4) + "-" + expiryText.substring(
                                         4, 6

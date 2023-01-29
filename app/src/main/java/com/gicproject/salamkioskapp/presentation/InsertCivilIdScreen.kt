@@ -53,6 +53,7 @@ fun InsertCivilIdScreen(
 
     val state = viewModel.stateInsertCivilId.value
 
+/*
     LaunchedEffect(key1 = Unit, block = {
         while (true) {
             delay(1000)
@@ -67,6 +68,7 @@ fun InsertCivilIdScreen(
 
         }
     })
+*/
 
 
     Scaffold { innerPadding ->
@@ -101,10 +103,10 @@ fun InsertCivilIdScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(20.dp)
                 ) {
-                    GoBack(navController)
+                 //   GoBack(navController)
                 }
             }
-            HeartBeatTime(second = second)
+      //    HeartBeatTime(second = second)
             HeaderDesign("Insert Civil ID of Patient",navController)
 
             Column(
@@ -296,7 +298,7 @@ fun InsertCivilIdScreen(
 
         if (state.success.isNotBlank()) {
             LaunchedEffect(key1 = true) {
-                navController.navigate(Screen.DoctorPayScreen.route)
+              //  navController.navigate(Screen.DoctorPayScreen.route)
             }
         }
         if (state.isLoading) {

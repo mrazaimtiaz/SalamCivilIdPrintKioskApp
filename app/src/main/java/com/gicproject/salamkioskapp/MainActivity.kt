@@ -2,6 +2,7 @@ package com.gicproject.salamkioskapp
 
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -17,6 +18,7 @@ import android.nfc.tech.Ndef
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
+import android.view.KeyEvent
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -56,6 +58,7 @@ class MainActivity : ComponentActivity(){
 
     val scard = SCard()
 
+    private val barcode = StringBuffer()
 
     private var mPrinter: PrinterAPI? = null
 
@@ -68,6 +71,20 @@ class MainActivity : ComponentActivity(){
         if (mNfcAdapter != null) mNfcAdapter!!.disableReaderMode(this)
     }
 
+    @SuppressLint("RestrictedApi")
+    override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
+
+        if (event?.action == KeyEvent.ACTION_DOWN) {
+            val pressedKey = event.unicodeChar.toChar()
+            barcode.append(pressedKey)
+        }
+        if (event?.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER) {
+           // viewModel?.showUserInputScreen(barcode.toString())
+            viewModel?.functionPrintBarcode("Imad Wasim","O+","29709259074")
+            barcode.delete(0, barcode.length)
+        }
+        return super.dispatchKeyEvent(event)
+    }
 
     public override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -270,7 +287,7 @@ class MainActivity : ComponentActivity(){
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
-                        startDestination = Screen.SelectDepartmentScreen.route
+                        startDestination = Screen.InsertCivilIdScreen.route
                     ) {
                         composable(
                             route = Screen.SelectOptionScreen.route
